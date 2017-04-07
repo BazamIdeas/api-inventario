@@ -5,7 +5,7 @@ $app->group('/bodega/', function () {
     
     $this->get('test', function ($req, $res, $args) {
         return $res->getBody()
-                   ->write('SI FUNCIONA');
+                   ->write('SI FUNCIONA XXX');
     });
     
     $this->get('getAll', function ($req, $res, $args) {
