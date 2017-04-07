@@ -16,14 +16,26 @@ class MovimientoModel
         $this->response = new Response();
     }
     
-    public function GetAll()
+    public function Historial($id)
     {
 		try
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("SELECT * FROM $this->table");
-			$stm->execute();
+			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                order by fecha");
+			$stm->execute(array($id['idBodega']));
             
 			$this->response->setResponse(true);
             $this->response->result = $stm->fetchAll();
@@ -36,14 +48,62 @@ class MovimientoModel
             return $this->response;
 		}
     }
+
+    public function HistorialProducto($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                AND idProducto = ?
+                order by fecha");
+            $stm->execute(array(
+                $id['idBodega'],
+                $id['idProducto']
+                ));
+            
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }
+    }
     
-    public function Get($id)
+    public function Datos($id)
     {
 		try
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("SELECT * FROM $this->table WHERE idBodega = ?");
+			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idMovimiento = ?");
 			$stm->execute(array($id));
 
 			$this->response->setResponse(true);
@@ -60,6 +120,8 @@ class MovimientoModel
     
     public function InsertOrUpdate($data)
     {
+        if ($data['tipo'] == 'Egreso'){ $cantidad = $data['cantidad'] * -1; }
+        else{$cantidad = 555 ;}
 		try 
 		{
             if(isset($data['idMovimiento']))
@@ -73,7 +135,7 @@ class MovimientoModel
                 $this->db->prepare($sql)
                      ->execute(
                         array(
-                            $data['cantidad'],
+                            $cantidad,
                             $data['bodegas_idBodega'],
                             $data['productos_idProducto'],
                             $data['idMovimiento']
@@ -88,7 +150,7 @@ class MovimientoModel
                 
             $this->db->prepare($sql)
                      ->execute(array(
-                        $data['cantidad'],
+                        $cantidad,
                         $data['tipo'],
                         $data['usuarios_idUsuario'],
                         $data['bodegas_idBodega'],
@@ -110,9 +172,7 @@ class MovimientoModel
     {
 		try 
 		{
-			$sql = "UPDATE $this->table SET 
-                            cantidad = 0
-                        WHERE idMovimiento = ?";
+			$sql = "DELETE FROM movimientos WHERE idMovimiento = ?";
                 
                 $this->db->prepare($sql)
                      ->execute(

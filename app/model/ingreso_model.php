@@ -73,6 +73,71 @@ class IngresoModel
             $this->response->setResponse(false, $e->getMessage());
         }
     }
+
+    public function listarIngresosBodega($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, cantidad, fecha, tipo, nombre as usuarioIngreso, bodega, idProducto, nombreProducto 
+                FROM ingresos
+                INNER JOIN proveedores on proveedores_idProveedor = idProveedor 
+                INNER JOIN ingresos_has_movimientos on ingresos_idIngreso = idIngreso
+                INNER JOIN movimientos on movimientos_idMovimiento = idMovimiento
+                INNER JOIN bodegas on idBodega = bodegas_idBodega
+                INNER JOIN usuarios on idUsuario = usuarios_idUsuario
+                INNER JOIN trabajadores on idTrabajador = trabajadores_idTrabajador
+                INNER JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                order by fecha");
+            $stm->execute(array($id['idBodega']));
+
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }  
+    }
+
+    public function listarIngresosProducto($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, cantidad, fecha, tipo, nombre as usuarioIngreso, bodega, idProducto, nombreProducto 
+                FROM ingresos
+                INNER JOIN proveedores on proveedores_idProveedor = idProveedor 
+                INNER JOIN ingresos_has_movimientos on ingresos_idIngreso = idIngreso
+                INNER JOIN movimientos on movimientos_idMovimiento = idMovimiento
+                INNER JOIN bodegas on idBodega = bodegas_idBodega
+                INNER JOIN usuarios on idUsuario = usuarios_idUsuario
+                INNER JOIN trabajadores on idTrabajador = trabajadores_idTrabajador
+                INNER JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                AND idProducto = ?
+                order by fecha");
+            $stm->execute(array(
+                $id['idBodega'],
+                $id['idProducto']));
+
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }  
+    }
     
 }
 
