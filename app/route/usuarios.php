@@ -1,7 +1,8 @@
 <?php
-use App\Model\ProductoModel;
+use App\Model\UsuarioModel;
+use App\Model\TrabajadorModel;
 
-$app->group('/producto/', function () {
+$app->group('/trabajador/', function () {
     
     $this->get('test', function ($req, $res, $args) {
         return $res->getBody()
@@ -9,7 +10,7 @@ $app->group('/producto/', function () {
     });
     
     $this->get('lista', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new UsuarioModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -22,7 +23,7 @@ $app->group('/producto/', function () {
     });
     
     $this->get('datos/{id}', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new UsuarioModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -35,7 +36,9 @@ $app->group('/producto/', function () {
     });
     
     $this->post('registro', function ($req, $res) {
-        $um = new ProductoModel();
+        $um = new UsuarioModel();
+        $t = new TrabajadorModel();
+        $idt = $t->InsertOrUpdate($req->getParsedBody())
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -43,14 +46,14 @@ $app->group('/producto/', function () {
            ->write(
             json_encode(
                 $um->InsertOrUpdate(
-                    $req->getParsedBody()
+                    $req->getParsedBody(), $idt['idInsertado']
                 )
             )
         );
     });
     
     $this->post('borrar/{id}', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new UsuarioModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')

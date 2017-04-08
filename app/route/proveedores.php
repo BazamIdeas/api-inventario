@@ -1,7 +1,7 @@
 <?php
-use App\Model\ProductoModel;
+use App\Model\ProveedorModel;
 
-$app->group('/producto/', function () {
+$app->group('/proveedor/', function () {
     
     $this->get('test', function ($req, $res, $args) {
         return $res->getBody()
@@ -9,7 +9,7 @@ $app->group('/producto/', function () {
     });
     
     $this->get('lista', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new ProveedorModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -22,7 +22,7 @@ $app->group('/producto/', function () {
     });
     
     $this->get('datos/{id}', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new ProveedorModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -35,7 +35,7 @@ $app->group('/producto/', function () {
     });
     
     $this->post('registro', function ($req, $res) {
-        $um = new ProductoModel();
+        $um = new ProveedorModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -50,7 +50,7 @@ $app->group('/producto/', function () {
     });
     
     $this->post('borrar/{id}', function ($req, $res, $args) {
-        $um = new ProductoModel();
+        $um = new ProveedorModel();
         
         return $res
            ->withHeader('Content-type', 'application/json')
