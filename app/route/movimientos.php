@@ -42,7 +42,7 @@ $app->group('/egreso/', function () {
         );
     });     
 
-        $this->post('listar', function ($req, $res) {
+        $this->post('lista', function ($req, $res) {
         $e = new EgresoModel();
 
         return $res
@@ -55,7 +55,7 @@ $app->group('/egreso/', function () {
         );
     });
 
-    $this->post('listar/producto', function ($req, $res) {
+    $this->post('lista/producto', function ($req, $res) {
         $e = new EgresoModel();
 
         return $res
@@ -94,7 +94,7 @@ $app->group('/ingreso/', function () {
         );
     });
 
-    $this->post('listar', function ($req, $res) {
+    $this->post('lista', function ($req, $res) {
         $i = new IngresoModel();
 
         return $res
@@ -107,7 +107,7 @@ $app->group('/ingreso/', function () {
         );
     });
 
-    $this->post('listar/producto', function ($req, $res) {
+    $this->post('lista/producto', function ($req, $res) {
         $i = new IngresoModel();
 
         return $res

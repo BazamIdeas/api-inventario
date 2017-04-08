@@ -8,7 +8,7 @@ $app->group('/bodega/', function () {
                    ->write('SI FUNCIONA XXX');
     });
     
-    $this->get('getAll', function ($req, $res, $args) {
+    $this->get('lista', function ($req, $res, $args) {
         $um = new BodegaModel();
         
         return $res
@@ -21,7 +21,7 @@ $app->group('/bodega/', function () {
         );
     });
     
-    $this->get('get/{id}', function ($req, $res, $args) {
+    $this->get('datos/{id}', function ($req, $res, $args) {
         $um = new BodegaModel();
         
         return $res
@@ -34,7 +34,7 @@ $app->group('/bodega/', function () {
         );
     });
     
-    $this->post('save', function ($req, $res) {
+    $this->post('registro', function ($req, $res) {
         $um = new BodegaModel();
         
         return $res
@@ -49,7 +49,7 @@ $app->group('/bodega/', function () {
         );
     });
     
-    $this->post('delete/{id}', function ($req, $res, $args) {
+    $this->post('borrar/{id}', function ($req, $res, $args) {
         $um = new BodegaModel();
         
         return $res
