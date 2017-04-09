@@ -15,16 +15,100 @@ class UsuarioModel
         $this->db = Database::StartUp();
         $this->response = new Response();
     }
-    
+
+    public function Login($email)
+    {
+    try
+    {
+      $result = array();
+
+      $stm = $this->db->prepare("SELECT uid, email, tipoUser, estado, nombre 
+        FROM $this->table
+        INNER JOIN trabajadores on trabajadores_idTrabajador = idTrabajador
+        WHERE email = ?");
+
+      $stm->execute(array($email['email']));
+
+      $this->response->result = $stm->fetch();
+      if ($this->response->result->estado){
+        $this->response->setResponse(true);
+        $_SESSION['uid'] = $this->response->result->uid;
+      }
+      else{
+        $this->response->setResponse(false,'Usuario Bloqueado');
+      }       
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }
+    }
+
+    public function Bloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estado = 0
+                        WHERE idUsuario = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }
+    }
+
+    public function Desbloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estado = 1
+                        WHERE idUsuario = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }
+    }
+
     public function GetAll()
     {
     try
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT email, tipoUser, estado, nombre 
-        FROM $this->table
-        INNER JOIN trabajadores on trabajadores_idTrabajdor = idTrabajador");
+      $stm = $this->db->prepare("SELECT idUsuario, uid, email, tipoUser, estado, nombre 
+        FROM $this->table, trabajadores
+        WHERE usuarios.trabajadores_idTrabajador = trabajadores.idTrabajador");
       $stm->execute();
             
       $this->response->setResponse(true);
@@ -38,6 +122,30 @@ class UsuarioModel
             return $this->response;
     }
     }
+
+    public function Verificar($data)
+    {
+    try
+    {
+      $result = array();
+
+      $stm = $this->db->prepare("SELECT * FROM $this->table
+        WHERE uid = ? AND
+        estado = 1
+        AND email = ?");
+      $stm->execute(array($data['uid'],$data['email']));
+
+      if ($stm->fetchColumn() > 0){
+        return true;
+      }
+      else {return false;}
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }  
+    }
     
     public function Get($id)
     {
@@ -45,10 +153,10 @@ class UsuarioModel
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT email, tipoUser, estado, nombre 
-        FROM $this->table
-        INNER JOIN trabajadores on trabajadores_idTrabajdor = idTrabajador
-        WHERE idUsuario = ?");
+      $stm = $this->db->prepare("SELECT uid, email, tipoUser, estado, nombre 
+        FROM $this->table, trabajadores
+        WHERE trabajadores_idTrabajador = idTrabajador AND
+        idUsuario = ?");
       $stm->execute(array($id));
 
       $this->response->setResponse(true);
@@ -72,7 +180,8 @@ class UsuarioModel
                 $sql = "UPDATE $this->table SET 
                             email = ?,
                             tipoUser = ?,
-                            estado = ?
+                            estado = ?,
+                            uid = ?
                         WHERE idUsuario = ?";
                 
                 $this->db->prepare($sql)
@@ -81,6 +190,7 @@ class UsuarioModel
                             $data['email'],
                             $data['tipoUser'],
                             $data['estado'],
+                            $data['uid'],
                             $data['idUsuario']
                         )
                     );
@@ -88,15 +198,16 @@ class UsuarioModel
             else
             {
                 $sql = "INSERT INTO $this->table
-                            (email,tipoUser,estado,trabajadores_idTrabajdor)
+                            (email,tipoUser,estado,trabajadores_idTrabajador,uid)
                             VALUES (?,?,?,?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(
                         $data['email'],
                         $data['tipoUser'],
-                        $data['estado'],
-                        $idt
+                        1,
+                        $idt,
+                        $data['uid']
                     )); 
                    
               $this->response->idInsertado = $this->db->lastInsertId();

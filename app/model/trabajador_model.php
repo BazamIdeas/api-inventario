@@ -4,7 +4,7 @@ namespace App\Model;
 use App\Lib\Database;
 use App\Lib\Response;
 
-class ProveedorModel
+class TrabajadorModel
 {
     private $db;
     private $table = 'trabajadores';

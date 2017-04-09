@@ -9,6 +9,7 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
+
 require __DIR__ . '/../vendor/autoload.php';
 
 session_start();
@@ -27,6 +28,7 @@ require __DIR__ . '/../src/middleware.php';
 require __DIR__ . '/../src/routes.php';
 
 require __DIR__ . '/../app/app_loader.php';
+
 
 // Run app
 $app->run();

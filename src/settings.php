@@ -1,6 +1,7 @@
 <?php
 return [
     'settings' => [
+        'seguridad' => false, //atributo creado para  activar la el middleware de verificacion
         'displayErrorDetails' => true, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 

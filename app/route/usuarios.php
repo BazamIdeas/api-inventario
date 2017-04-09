@@ -2,13 +2,52 @@
 use App\Model\UsuarioModel;
 use App\Model\TrabajadorModel;
 
-$app->group('/trabajador/', function () {
+$app->group('/usuario/', function () {
     
     $this->get('test', function ($req, $res, $args) {
         return $res->getBody()
                    ->write('SI FUNCIONA XXX');
     });
-    
+
+    $this->post('login', function ($req, $res, $args) {
+        $um = new UsuarioModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->Login($req->getParsedBody())
+            )
+        );
+    });
+
+    $this->get('bloquear/{id}', function ($req, $res, $args) {
+        $um = new UsuarioModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->Bloquear($args['id'])
+            )
+        );
+    });
+
+    $this->get('desbloquear/{id}', function ($req, $res, $args) {
+        $um = new UsuarioModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->Desbloquear($args['id'])
+            )
+        );
+    });
+
     $this->get('lista', function ($req, $res, $args) {
         $um = new UsuarioModel();
         
@@ -38,7 +77,7 @@ $app->group('/trabajador/', function () {
     $this->post('registro', function ($req, $res) {
         $um = new UsuarioModel();
         $t = new TrabajadorModel();
-        $idt = $t->InsertOrUpdate($req->getParsedBody())
+        $idt = $t->InsertOrUpdate($req->getParsedBody());
         
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -62,6 +101,14 @@ $app->group('/trabajador/', function () {
             json_encode(
                 $um->Delete($args['id'])
             )
+        );
+    });
+
+    $this->get('salir', function ($req, $res, $args) {
+      session_destroy();
+        return $res->getBody()
+                   ->write(
+            json_encode(array('response' => true))
         );
     });
     
