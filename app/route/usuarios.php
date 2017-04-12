@@ -85,13 +85,13 @@ $app->group('/usuario/', function () {
            ->write(
             json_encode(
                 $um->InsertOrUpdate(
-                    $req->getParsedBody(), $idt['idInsertado']
+                    $req->getParsedBody(), $idt->idInsertado
                 )
             )
         );
     });
     
-    $this->post('borrar/{id}', function ($req, $res, $args) {
+    $this->get('borrar/{id}', function ($req, $res, $args) {
         $um = new UsuarioModel();
         
         return $res

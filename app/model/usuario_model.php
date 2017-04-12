@@ -22,7 +22,7 @@ class UsuarioModel
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT uid, email, tipoUser, estado, nombre 
+      $stm = $this->db->prepare("SELECT idUsuario, uid, email, tipoUser, estado, nombre 
         FROM $this->table
         INNER JOIN trabajadores on trabajadores_idTrabajador = idTrabajador
         WHERE email = ?");
@@ -30,14 +30,25 @@ class UsuarioModel
       $stm->execute(array($email['email']));
 
       $this->response->result = $stm->fetch();
-      if ($this->response->result->estado){
-        $this->response->setResponse(true);
-        $_SESSION['uid'] = $this->response->result->uid;
+
+      if ($stm->fetchColumn() > 0){    
+
+          if ($this->response->result->estado){
+            $this->response->setResponse(true);
+            $_SESSION['uid'] = $this->response->result->uid;
+            $_SESSION['idUsuario'] = $this->response->result->idUsuario;
+
+          }
+          else{
+            $this->response->setResponse(false,'Usuario Bloqueado');
+          }       
       }
+
       else{
-        $this->response->setResponse(false,'Usuario Bloqueado');
-      }       
-            return $this->response;
+        $this->response->setResponse(false,'Usuario no existe');
+      }
+
+      return $this->response;
     }
     catch(Exception $e)
     {
@@ -179,9 +190,7 @@ class UsuarioModel
             {
                 $sql = "UPDATE $this->table SET 
                             email = ?,
-                            tipoUser = ?,
-                            estado = ?,
-                            uid = ?
+                            tipoUser = ?
                         WHERE idUsuario = ?";
                 
                 $this->db->prepare($sql)
@@ -189,8 +198,6 @@ class UsuarioModel
                         array(
                             $data['email'],
                             $data['tipoUser'],
-                            $data['estado'],
-                            $data['uid'],
                             $data['idUsuario']
                         )
                     );
@@ -199,7 +206,7 @@ class UsuarioModel
             {
                 $sql = "INSERT INTO $this->table
                             (email,tipoUser,estado,trabajadores_idTrabajador,uid)
-                            VALUES (?,?,?,?)";
+                            VALUES (?,?,?,?,?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(

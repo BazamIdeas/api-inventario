@@ -87,7 +87,7 @@ class ProveedorModel
                 
             $this->db->prepare($sql)
                      ->execute(array(
-                        $data['nombreProducto'],
+                        $data['nombreProveedor'],
                         $data['descripcion']
                     )); 
                    

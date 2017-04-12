@@ -49,7 +49,7 @@ $app->group('/trabajador/', function () {
         );
     });
     
-    $this->post('borrar/{id}', function ($req, $res, $args) {
+    $this->get('borrar/{id}', function ($req, $res, $args) {
         $um = new TrabajadorModel();
         
         return $res

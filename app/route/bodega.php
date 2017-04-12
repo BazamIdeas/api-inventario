@@ -49,7 +49,7 @@ $app->group('/bodega/', function () {
         );
     });
     
-    $this->post('borrar/{id}', function ($req, $res, $args) {
+    $this->get('borrar/{id}', function ($req, $res, $args) {
         $um = new BodegaModel();
         
         return $res

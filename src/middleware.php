@@ -6,6 +6,7 @@ use App\Model\UsuarioModel;
 
 $app->add(function ($request, $response, $next) {
 	if(!$this->get('settings')['seguridad']){
+		$_SESSION['idUsuario'] = 1;
 		return	$response =	$next($request, $response);
 	}
 

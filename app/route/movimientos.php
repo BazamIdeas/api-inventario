@@ -26,9 +26,7 @@ $app->group('/egreso/', function () {
         );
     });  
     $this->post('modificar', function ($req, $res) {
-        $m = new MovimientoModel();
         $e = new EgresoModel();
-        $m->InsertOrUpdate($req->getParsedBody() );
 
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -50,7 +48,20 @@ $app->group('/egreso/', function () {
            ->getBody()
            ->write(
             json_encode(
-                $e->listarEgresosBodega($req->getParsedBody())
+                $e->listarEgresos($req->getParsedBody())
+            )
+        );
+    });
+
+      $this->post('datos', function ($req, $res) {
+        $e = new EgresoModel();
+
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $e->listarEgresoMovimientos($req->getParsedBody())
             )
         );
     });
@@ -63,7 +74,20 @@ $app->group('/egreso/', function () {
            ->getBody()
            ->write(
             json_encode(
-                $i->listarEgresosProducto($req->getParsedBody())
+                $e->listarEgresosProducto($req->getParsedBody())
+            )
+        );
+    });
+
+    $this->get('borrar/{id}', function ($req, $res, $args) {
+        $e = new EgresoModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $e->Delete($args['id'])
             )
         );
     });
@@ -102,7 +126,19 @@ $app->group('/ingreso/', function () {
            ->getBody()
            ->write(
             json_encode(
-                $i->listarIngresosBodega($req->getParsedBody())
+                $i->listarIngresos($req->getParsedBody())
+            )
+        );
+    });
+    $this->post('datos', function ($req, $res) {
+        $i = new IngresoModel();
+
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $i->listarIngresoMovimientos($req->getParsedBody())
             )
         );
     });
@@ -121,9 +157,7 @@ $app->group('/ingreso/', function () {
     });
 
       $this->post('modificar', function ($req, $res) {
-        $m = new MovimientoModel();
         $i = new IngresoModel();
-        $m->InsertOrUpdate($req->getParsedBody() );
 
         return $res
            ->withHeader('Content-type', 'application/json')
@@ -131,11 +165,24 @@ $app->group('/ingreso/', function () {
            ->write(
             json_encode(
                 $i->InsertIngreso(
-                  $req->getParsedBody($id) 
+                  $req->getParsedBody() 
               )
             )
         );
-    });      
+    });    
+
+    $this->get('borrar/{id}', function ($req, $res, $args) {
+         $i = new IngresoModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $i->Delete($args['id'])
+            )
+        );
+    });  
 });// FIN DE INGRESO
 
 
@@ -183,7 +230,7 @@ $app->group('/movimiento/', function () {
         );
     });
     
-    $this->post('borrar', function ($req, $res) {
+    $this->get('borrar/{id}', function ($req, $res, $args) {
         $m = new MovimientoModel();
 
         return $res
@@ -192,10 +239,25 @@ $app->group('/movimiento/', function () {
            ->write(
             json_encode(
                 $m->Borrar(
-                    $req->getParsedBody()
+                    $args['id']
                 )
             )
         );
     });    
+
+    $this->post('modificar', function ($req, $res) {
+        $m = new MovimientoModel();
+
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $m->InsertOrUpdate(
+                  $req->getParsedBody() 
+              )
+            )
+        );
+    });     
 
 });//FIN DE MOVIMIENTO

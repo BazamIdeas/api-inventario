@@ -22,7 +22,7 @@ class MovimientoModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
                 tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -55,7 +55,7 @@ class MovimientoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
                 tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -92,7 +92,7 @@ class MovimientoModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
                 tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -121,14 +121,13 @@ class MovimientoModel
     public function InsertOrUpdate($data)
     {
         if ($data['tipo'] == 'Egreso'){ $cantidad = $data['cantidad'] * -1; }
-        else{$cantidad = 555 ;}
+        else{$cantidad = $data['cantidad'] ;}
 		try 
 		{
             if(isset($data['idMovimiento']))
             {
                 $sql = "UPDATE $this->table SET 
                             cantidad = ?,
-                            bodegas_idBodega = ?,
                             productos_idProducto = ?
                         WHERE idMovimiento = ?";
                 
@@ -136,7 +135,6 @@ class MovimientoModel
                      ->execute(
                         array(
                             $cantidad,
-                            $data['bodegas_idBodega'],
                             $data['productos_idProducto'],
                             $data['idMovimiento']
                         )
@@ -152,7 +150,7 @@ class MovimientoModel
                      ->execute(array(
                         $cantidad,
                         $data['tipo'],
-                        $data['usuarios_idUsuario'],
+                        $_SESSION['idUsuario'],
                         $data['bodegas_idBodega'],
                         $data['productos_idProducto']
                         )); 
@@ -177,7 +175,7 @@ class MovimientoModel
                 $this->db->prepare($sql)
                      ->execute(
                         array(
-                            $id['idMovimiento']
+                            $id
                         )
                     );
             
