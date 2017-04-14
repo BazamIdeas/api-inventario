@@ -203,6 +203,7 @@ $app->group('/movimiento/', function () {
         );
     });
 
+
     $this->post('historial/producto', function ($req, $res) {
         $m = new MovimientoModel();
         return $res

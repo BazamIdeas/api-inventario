@@ -1,5 +1,6 @@
 <?php
 use App\Model\BodegaModel;
+use App\Model\MovimientoModel;
 
 $app->group('/bodega/', function () {
     
@@ -17,6 +18,20 @@ $app->group('/bodega/', function () {
            ->write(
             json_encode(
                 $um->GetAll()
+            )
+        );
+    });
+
+    $this->post('productos', function ($req, $res) {
+        $m = new MovimientoModel();
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+               $m->ProductosBodega(
+                  $req->getParsedBody() 
+              )
             )
         );
     });

@@ -34,7 +34,7 @@ class MovimientoModel
                 LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
                 LEFT JOIN productos on idProducto = productos_idProducto
                 WHERE idBodega = ?
-                order by fecha");
+                order by fecha DESC");
 			$stm->execute(array($id['idBodega']));
             
 			$this->response->setResponse(true);
@@ -47,6 +47,38 @@ class MovimientoModel
 			$this->response->setResponse(false, $e->getMessage());
             return $this->response;
 		}
+    }
+
+    public function ProductosBodega($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT  codigo, nombreProducto, idProducto, productos.descripcion as descripcionProducto, SUM(cantidad) AS existencia
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                group by idProducto");
+            $stm->execute(array($id['idBodega']));
+            
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }
     }
 
     public function HistorialProducto($id)
@@ -68,7 +100,7 @@ class MovimientoModel
                 LEFT JOIN productos on idProducto = productos_idProducto
                 WHERE idBodega = ?
                 AND idProducto = ?
-                order by fecha");
+                order by fecha DESC");
             $stm->execute(array(
                 $id['idBodega'],
                 $id['idProducto']
