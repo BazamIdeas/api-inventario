@@ -49,6 +49,39 @@ class MovimientoModel
 		}
     }
 
+    public function HistorialPaginado($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                order by fecha DESC LIMIT ? OFFSET ?");
+            $stm->execute(array($id['idBodega'],$id['limit'],$id['offset']));
+            
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }
+    }
+
     public function ProductosBodega($id)
     {
         try

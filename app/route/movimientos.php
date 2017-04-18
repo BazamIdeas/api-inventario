@@ -203,6 +203,20 @@ $app->group('/movimiento/', function () {
         );
     });
 
+    $this->post('historial/paginado', function ($req, $res) {
+        $m = new MovimientoModel();
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+               $m->HistorialPaginado(
+                  $req->getParsedBody() 
+              )
+            )
+        );
+    });
+
 
     $this->post('historial/producto', function ($req, $res) {
         $m = new MovimientoModel();
