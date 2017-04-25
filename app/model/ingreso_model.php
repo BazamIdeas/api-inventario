@@ -98,7 +98,7 @@ class IngresoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT tipoDocumento, numeroDoc, nombreProveedor, precio, cantidad, fecha, nombre as usuarioIngreso, idProducto, codigo, nombreProducto 
+            $stm = $this->db->prepare("SELECT idMovimiento, tipoDocumento, numeroDoc, nombreProveedor, precio, cantidad, fecha, nombre as usuarioIngreso, idProducto, codigo, nombreProducto 
                 FROM ingresos
                 INNER JOIN proveedores on proveedores_idProveedor = idProveedor 
                 INNER JOIN ingresos_has_movimientos on ingresos_idIngreso = idIngreso
@@ -128,7 +128,7 @@ class IngresoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, cantidad, fecha, tipo, nombre as usuarioIngreso, bodega, idProducto, codigo, nombreProducto 
+            $stm = $this->db->prepare("SELECT idMovimiento, tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, cantidad, fecha, tipo, nombre as usuarioIngreso, bodega, idProducto, codigo, nombreProducto 
                 FROM ingresos
                 INNER JOIN proveedores on proveedores_idProveedor = idProveedor 
                 INNER JOIN ingresos_has_movimientos on ingresos_idIngreso = idIngreso

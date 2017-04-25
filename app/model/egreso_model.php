@@ -92,7 +92,7 @@ class EgresoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT orden, cantidad, fecha, tipo, trabajadores.nombre as trabajador, bodega, nombreProducto, idProducto, codigo
+            $stm = $this->db->prepare("SELECT idMovimiento, orden, cantidad, fecha, tipo, trabajadores.nombre as trabajador, bodega, nombreProducto, idProducto, codigo
                 FROM egresos
                 INNER JOIN egresos_has_movimientos on egresos_idEgreso = idEgreso
                 INNER JOIN movimientos on movimientos_idMovimiento = idMovimiento
@@ -122,7 +122,7 @@ class EgresoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT orden,  idEgreso,  cantidad, fecha, tipo, trabajadores.nombre as trabajador, bodega, nombreProducto, idProducto, codigo
+            $stm = $this->db->prepare("SELECT idMovimiento, orden,  idEgreso,  cantidad, fecha, tipo, trabajadores.nombre as trabajador, bodega, nombreProducto, idProducto, codigo
                 FROM egresos
                 INNER JOIN egresos_has_movimientos on egresos_idEgreso = idEgreso
                 INNER JOIN movimientos on movimientos_idMovimiento = idMovimiento

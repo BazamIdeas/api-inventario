@@ -22,7 +22,7 @@ class MovimientoModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+			$stm = $this->db->prepare("SELECT idMovimiento, bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
                 tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -55,7 +55,7 @@ class MovimientoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+            $stm = $this->db->prepare("SELECT  idMovimiento, bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
                 tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
