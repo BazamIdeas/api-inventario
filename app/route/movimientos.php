@@ -285,7 +285,8 @@ $app->group('/movimiento/', function () {
         $m = new MovimientoModel();
         $movimientos = $m->DescargaMes($args['id']);
         $titulo = 'Movimientos del mes - '.gmdate('m');
-
+        
+        if ( count($movimientos) > 0 ){
           foreach ($movimientos as $movi) {
 
             /** Error reporting */
@@ -349,12 +350,21 @@ $app->group('/movimiento/', function () {
            ->getBody()
            ->write(
             json_encode(array('response' => true, 'link' => 'excel/'.$titulo.'.xls'))
-        );
+            );
           //  $objWriter->save('php://output');
             exit; 
-            }
+          }
 
+        }
+        else{
+          return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(array('response' => false, 'link' => 'No hay registros'))
+            );
 
+        }
     });     
 
 });//FIN DE MOVIMIENTO
