@@ -343,8 +343,14 @@ $app->group('/movimiento/', function () {
             header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
             header ('Pragma: public'); // HTTP/1.0
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
-            echo "string";
+            $objWriter->save('excel/'.$titulo.'.xls');
+           return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(array('response' => true, 'link' => 'excel/'.$titulo.'.xls'))
+        );
+          //  $objWriter->save('php://output');
             exit; 
             }
 
