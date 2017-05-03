@@ -330,6 +330,45 @@ class MovimientoModel
         }
     }
 
+    public function DescargaRango($datos)
+    {
+        try
+        {$fecha_1= date("Y-m-d", strtotime($datos['fecha_inicio'])); 
+        $fecha_2= date("Y-m-d", strtotime($datos['fecha_fin']."+ 1 day")); 
+            $result = array();
+
+            $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                FROM movimientos
+                LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
+                LEFT JOIN egresos on egresos_idEgreso = idEgreso
+                LEFT JOIN ingresos on ingresos_idIngreso = idIngreso
+                LEFT JOIN proveedores on proveedores_idProveedor = idProveedor
+                LEFT JOIN bodegas on idBodega = bodegas_idBodega
+                LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
+                LEFT JOIN productos on idProducto = productos_idProducto
+                WHERE idBodega = ?
+                AND fecha BETWEEN ? AND ? 
+                order by fecha DESC");
+            $stm->execute(array(
+                        $datos['idBodega'],
+                        $fecha_1,
+                        $fecha_2
+                        ));
+            
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response->result;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }
+    }
+
 }//fin de clase
 
  

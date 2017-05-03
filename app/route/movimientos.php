@@ -367,4 +367,90 @@ $app->group('/movimiento/', function () {
         }
     });     
 
+$this->post('descargar/rango', function ($req, $res,  $args) {
+        $m = new MovimientoModel();
+        $movimientos = $m->DescargaRango($req->getParsedBody() );
+        $titulo = 'Movimientos - Rango';
+        
+        if ( count($movimientos) > 0 ){
+          foreach ($movimientos as $movi) {
+
+            /** Error reporting */
+            error_reporting(E_ALL);
+            ini_set('display_errors', TRUE);
+            ini_set('display_startup_errors', TRUE);
+            date_default_timezone_set('Europe/London');
+            if (PHP_SAPI == 'cli')
+              die('This example should only be run from a Web Browser');
+            /** Include PHPExcel */
+            require_once dirname(__FILE__) . '/../lib/PHPExcel.php';
+            // Create new PHPExcel object
+            $objPHPExcel = new PHPExcel();
+            // Set document properties
+            $objPHPExcel->getProperties()->setCreator("Bargiotti")
+                           ->setTitle($titulo)
+                           ->setDescription("Movimientos de la bodega del mes");
+            // Add some data
+            $objPHPExcel->setActiveSheetIndex(0)
+                        ->setCellValue('A1', 'Fecha')
+                        ->setCellValue('B1', 'Tipo de Movimiento')
+                        ->setCellValue('C1', 'Trabajador')
+                        ->setCellValue('D1', 'Material')
+                        ->setCellValue('E1', 'Documento')
+                        ->setCellValue('F1', 'Numero')
+                        ->setCellValue('G1', 'Cantidad');
+            // Miscellaneous glyphs, UTF-8
+            $y = 2;
+            foreach ($movimientos as $movi) {
+
+               $objPHPExcel->setActiveSheetIndex(0)
+                        ->setCellValue('A'.$y, date("d-m-Y", strtotime($movi->fecha) ))
+                        ->setCellValue('B'.$y, $movi->tipo)
+                        ->setCellValue('C'.$y, $movi->trabajador)
+                        ->setCellValue('D'.$y, $movi->nombreProducto)
+                        ->setCellValue('E'.$y, $movi->tipoDocumento)
+                        ->setCellValue('F'.$y, $movi->numeroDoc)
+                        ->setCellValue('G'.$y, $movi->cantidad);
+                        $y++;
+            }
+
+            // Rename worksheet
+            $objPHPExcel->getActiveSheet()->setTitle($titulo);
+            // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+            $objPHPExcel->setActiveSheetIndex(0);
+            // Redirect output to a client’s web browser (Excel5)
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename='.$titulo.'.xls');
+            header('Cache-Control: max-age=0');
+            // If you're serving to IE 9, then the following may be needed
+            header('Cache-Control: max-age=1');
+            // If you're serving to IE over SSL, then the following may be needed
+            header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+            header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+            header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header ('Pragma: public'); // HTTP/1.0
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $objWriter->save('excel/'.$titulo.'.xls');
+           return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(array('response' => true, 'link' => 'excel/'.$titulo.'.xls'))
+            );
+          //  $objWriter->save('php://output');
+            exit; 
+          }
+
+        }
+        else{
+          return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(array('response' => false, 'link' => 'No hay registros'))
+            );
+
+        }
+    });     
+
 });//FIN DE MOVIMIENTO
