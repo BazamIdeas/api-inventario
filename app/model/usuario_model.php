@@ -190,7 +190,8 @@ class UsuarioModel
             {
                 $sql = "UPDATE $this->table SET 
                             email = ?,
-                            tipoUser = ?
+                            tipoUser = ?, 
+                            nombreUser = ?,
                         WHERE idUsuario = ?";
                 
                 $this->db->prepare($sql)
@@ -198,6 +199,7 @@ class UsuarioModel
                         array(
                             $data['email'],
                             $data['tipoUser'],
+                            $data['nombre'],
                             $data['idUsuario']
                         )
                     );
@@ -205,8 +207,8 @@ class UsuarioModel
             else
             {
                 $sql = "INSERT INTO $this->table
-                            (email,tipoUser,estado,trabajadores_idTrabajador,uid)
-                            VALUES (?,?,?,?,?)";
+                            (email,tipoUser,estado,trabajadores_idTrabajador,uid,nombreUser)
+                            VALUES (?,?,?,?,?,?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(
@@ -214,7 +216,8 @@ class UsuarioModel
                         $data['tipoUser'],
                         1,
                         $idt,
-                        $data['uid']
+                        $data['uid'],
+                        $data['nombre']
                     )); 
                    
               $this->response->idInsertado = $this->db->lastInsertId();

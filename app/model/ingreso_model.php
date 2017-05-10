@@ -156,6 +156,29 @@ class IngresoModel
         }  
     }
 
+        public function ultimoPrecioCompra($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("select idMovimiento, idIngreso, fecha, precio from ingresos_has_movimientos inner join ingresos on ingresos_idIngreso = idIngreso inner join movimientos on movimientos_idMovimiento = idMovimiento inner join productos on productos_idProducto = idProducto where idProducto = ? order by idMovimiento DESC limit 1
+");
+            $stm->execute(array(
+                $id['idProducto']));
+
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetch();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }  
+    }
+
      public function Delete($id)
     {
         try 

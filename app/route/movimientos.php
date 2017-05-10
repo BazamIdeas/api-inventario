@@ -149,6 +149,19 @@ $app->group('/ingreso/', function () {
         );
     });
 
+    $this->post('precio', function ($req, $res) {
+        $i = new IngresoModel();
+
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $i->ultimoPrecioCompra($req->getParsedBody())
+            )
+        );
+    });
+
     $this->post('lista/producto', function ($req, $res) {
         $i = new IngresoModel();
 
@@ -394,23 +407,28 @@ $this->post('descargar/rango', function ($req, $res,  $args) {
             $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('A1', 'Fecha')
                         ->setCellValue('B1', 'Tipo de Movimiento')
-                        ->setCellValue('C1', 'Trabajador')
+                        ->setCellValue('C1', 'Trabajador/Proveedor')
                         ->setCellValue('D1', 'Material')
                         ->setCellValue('E1', 'Documento')
                         ->setCellValue('F1', 'Numero')
-                        ->setCellValue('G1', 'Cantidad');
+                        ->setCellValue('G1', 'Cantidad')
+                        ->setCellValue('H1', 'Usuario-Entrega/Recibe');
             // Miscellaneous glyphs, UTF-8
             $y = 2;
             foreach ($movimientos as $movi) {
-
+              if ($movi->trabajador)
+                {$tp = $movi->trabajador;}
+              else
+                 {$tp = $movi->nombreProveedor;}
                $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValue('A'.$y, date("d-m-Y", strtotime($movi->fecha) ))
                         ->setCellValue('B'.$y, $movi->tipo)
-                        ->setCellValue('C'.$y, $movi->trabajador)
+                        ->setCellValue('C'.$y, $tp)
                         ->setCellValue('D'.$y, $movi->nombreProducto)
                         ->setCellValue('E'.$y, $movi->tipoDocumento)
                         ->setCellValue('F'.$y, $movi->numeroDoc)
-                        ->setCellValue('G'.$y, $movi->cantidad);
+                        ->setCellValue('G'.$y, $movi->cantidad)
+                        ->setCellValue('H'.$y, $movi->nombreUser);
                         $y++;
             }
 

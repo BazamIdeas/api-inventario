@@ -303,7 +303,7 @@ class MovimientoModel
             $result = array();
 
             $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
-                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, nombreUser
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
                 LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -313,6 +313,7 @@ class MovimientoModel
                 LEFT JOIN bodegas on idBodega = bodegas_idBodega
                 LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
                 LEFT JOIN productos on idProducto = productos_idProducto
+                LEFT JOIN usuarios on usuarios_idUsuario = idUsuario
                 WHERE idBodega = ?
                 AND MONTH(fecha) = MONTH (NOW())
                 order by fecha DESC");
@@ -338,7 +339,7 @@ class MovimientoModel
             $result = array();
 
             $stm = $this->db->prepare("SELECT  bodega, fecha, nombreProducto, idProducto,tipo, codigo, productos.descripcion as descripcionProducto, cantidad, trabajadores.nombre as trabajador,  orden,  idEgreso,
-                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio
+                tipoDocumento, numeroDoc, idIngreso, nombreProveedor, precio, nombreUser
                 FROM movimientos
                 LEFT JOIN egresos_has_movimientos on egresos_has_movimientos.movimientos_idMovimiento = idMovimiento
                 LEFT JOIN ingresos_has_movimientos on ingresos_has_movimientos.movimientos_idMovimiento = idMovimiento
@@ -348,6 +349,7 @@ class MovimientoModel
                 LEFT JOIN bodegas on idBodega = bodegas_idBodega
                 LEFT JOIN trabajadores on idTrabajador = egresos.trabajadores_idTrabajador
                 LEFT JOIN productos on idProducto = productos_idProducto
+                LEFT JOIN usuarios on usuarios_idUsuario = idUsuario
                 WHERE idBodega = ?
                 AND fecha BETWEEN ? AND ? 
                 order by fecha DESC");
