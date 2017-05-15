@@ -22,7 +22,7 @@ class ProveedorModel
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT * FROM $this->table");
+      $stm = $this->db->prepare("SELECT * FROM $this->table WHERE estadoP = 1");
       $stm->execute();
             
       $this->response->setResponse(true);
@@ -82,13 +82,14 @@ class ProveedorModel
             {
                 $sql = "INSERT INTO $this->table
                             (nombreProveedor,
-                            descripcion )
-                            VALUES (?,?)";
+                            descripcion, estadoP )
+                            VALUES (?,?,?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(
                         $data['nombreProveedor'],
-                        $data['descripcion']
+                        $data['descripcion'],
+                        1
                     )); 
                    
               $this->response->idInsertado = $this->db->lastInsertId();
@@ -116,6 +117,60 @@ class ProveedorModel
     } catch (Exception $e) 
     {
       $this->response->setResponse(false, $e->getMessage());
+    }
+    }
+
+        public function Bloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estadoP = 0
+                        WHERE idProveedor = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }
+    }
+
+    public function Desbloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estadoP = 1
+                        WHERE idProveedor = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
     }
     }
 }

@@ -61,5 +61,31 @@ $app->group('/proveedor/', function () {
             )
         );
     });
+
+        $this->get('bloquear/{id}', function ($req, $res, $args) {
+        $um = new ProveedorModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->Bloquear($args['id'])
+            )
+        );
+    });
+
+    $this->get('desbloquear/{id}', function ($req, $res, $args) {
+        $um = new ProveedorModel();
+        
+        return $res
+           ->withHeader('Content-type', 'application/json')
+           ->getBody()
+           ->write(
+            json_encode(
+                $um->Desbloquear($args['id'])
+            )
+        );
+    });
     
 });

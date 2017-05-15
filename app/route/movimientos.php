@@ -2,6 +2,7 @@
 use App\Model\MovimientoModel;
 use App\Model\EgresoModel;
 use App\Model\IngresoModel;
+use App\Model\ProductoModel;
 use App\Lib\Response;
 
 $app->group('/egreso/', function () {
@@ -9,25 +10,53 @@ $app->group('/egreso/', function () {
     $this->post('registro', function ($req, $res) {
         $m = new MovimientoModel();
         $e = new EgresoModel();
+        $p = new ProductoModel();
         $datos = $req->getParsedBody() ;
-        $ide = $e->InsertEgreso($req->getParsedBody() );
+        $excedidos = array();
 
-        foreach ($datos['egresos'] as $egreso){
-        $idm = $m->InsertOrUpdate($egreso );
-        $m->relacionEgresoMovimiento($ide->idInsertado,$idm->idInsertado);
-
+       foreach ($datos['egresos'] as $egreso){
+          $existencia = $p->ProductosExistencia($egreso );
+          $ex=$existencia->result->existencia;
+          if(  $ex < $egreso["cantidad"]){
+            $excedidos[]=$existencia->result->nombreProducto;
+          }
         }
 
-        return $res
-            ->withHeader("Access-Control-Allow-Origin", "*")
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            
-            
-           ->getBody()
-           ->write(
-            json_encode(array('response' => true))
-        );
+        if (count($excedidos) == 0){
+          $ide = $e->InsertEgreso($req->getParsedBody() );
+
+          foreach ($datos['egresos'] as $egreso){
+              $existencia = $p->ProductosExistencia($egreso );
+          $idm = $m->InsertOrUpdate($egreso );
+          $m->relacionEgresoMovimiento($ide->idInsertado,$idm->idInsertado);
+
+          }
+
+          return $res
+              ->withHeader("Access-Control-Allow-Origin", "*")
+              ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+              ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+              
+              
+             ->getBody()
+             ->write(
+              json_encode(array('response' => true, "resul" => $existencia->result->existencia))
+          );
+      }
+
+        else{
+          return $res
+              ->withHeader("Access-Control-Allow-Origin", "*")
+              ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+              ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+              
+              
+             ->getBody()
+             ->write(
+              json_encode(array('response' => false, "msg"=>"Una o mas cantidades excede al stock", "resul"=>$excedidos))
+          );
+        }
+
     });  
     $this->post('modificar', function ($req, $res) {
         $e = new EgresoModel();

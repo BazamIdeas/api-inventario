@@ -22,7 +22,7 @@ class TrabajadorModel
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT * FROM $this->table");
+      $stm = $this->db->prepare("SELECT * FROM $this->table WHERE estadoT = 1");
       $stm->execute();
             
       $this->response->setResponse(true);
@@ -79,12 +79,13 @@ class TrabajadorModel
             else
             {
                 $sql = "INSERT INTO $this->table
-                            (nombre)
+                            (nombre, estadoT)
                             VALUES (?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(
-                        $data['nombre']
+                        $data['nombre'],
+                        1
                     )); 
                    
               $this->response->idInsertado = $this->db->lastInsertId();
@@ -112,6 +113,60 @@ class TrabajadorModel
     } catch (Exception $e) 
     {
       $this->response->setResponse(false, $e->getMessage());
+    }
+    }
+
+        public function Bloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estadoT = 0
+                        WHERE idTrabajador = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+    }
+    }
+
+    public function Desbloquear($id)
+    {
+    try
+    {
+      $result = array();
+
+       $sql = "UPDATE $this->table SET estadoT = 1
+                        WHERE idTrabajador = ?";
+                
+                $this->db->prepare($sql)
+                     ->execute(
+                        array(
+                            $id
+                        )
+                    );
+            
+      $this->response->setResponse(true);
+            
+            return $this->response;
+    }
+    catch(Exception $e)
+    {
+      $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
     }
     }
 }
