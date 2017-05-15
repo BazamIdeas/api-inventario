@@ -119,7 +119,7 @@ class UsuarioModel
 
       $stm = $this->db->prepare("SELECT idUsuario, uid, email, tipoUser, estado, nombre 
         FROM $this->table, trabajadores
-        WHERE usuarios.trabajadores_idTrabajador = trabajadores.idTrabajador AND estado = 1");
+        WHERE usuarios.trabajadores_idTrabajador = trabajadores.idTrabajador");
       $stm->execute();
             
       $this->response->setResponse(true);

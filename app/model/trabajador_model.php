@@ -22,7 +22,7 @@ class TrabajadorModel
     {
       $result = array();
 
-      $stm = $this->db->prepare("SELECT * FROM $this->table WHERE estadoT = 1");
+      $stm = $this->db->prepare("SELECT * FROM $this->table");
       $stm->execute();
             
       $this->response->setResponse(true);
