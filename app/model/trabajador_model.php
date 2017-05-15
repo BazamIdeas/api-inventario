@@ -80,7 +80,7 @@ class TrabajadorModel
             {
                 $sql = "INSERT INTO $this->table
                             (nombre, estadoT)
-                            VALUES (?)";
+                            VALUES (?,?)";
                 
             $this->db->prepare($sql)
                      ->execute(array(
