@@ -191,7 +191,7 @@ class UsuarioModel
                 $sql = "UPDATE $this->table SET 
                             email = ?,
                             tipoUser = ?, 
-                            nombreUser = ?,
+                            nombreUser = ?
                         WHERE idUsuario = ?";
                 
                 $this->db->prepare($sql)
