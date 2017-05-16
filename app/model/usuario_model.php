@@ -203,6 +203,18 @@ class UsuarioModel
                             $data['idUsuario']
                         )
                     );
+
+                $sql2 = "UPDATE trabajadores SET nombre = ? WHERE idTrabajador = (SELECT trabajadores_idTrabajador FROM usuarios WHERE idUsuario = ? )";
+                
+                $this->db->prepare($sql2)
+                     ->execute(
+                        array(
+                            $data['nombre'],
+                            $data['idUsuario']
+                        )
+                    );
+
+
             }
             else
             {

@@ -77,15 +77,23 @@ $app->group('/usuario/', function () {
     $this->post('registro', function ($req, $res) {
         $um = new UsuarioModel();
         $t = new TrabajadorModel();
-        $idt = $t->InsertOrUpdate($req->getParsedBody());
-        
+        $datosU = $req->getParsedBody();
+
+        if (!isset($datosU["idUsuario"])){
+          $idt = $t->InsertOrUpdate($datosU);
+          $idT = $idt->idInsertado;
+        }
+
+        else{
+          $idT = 0;
+        }
         return $res
            ->withHeader('Content-type', 'application/json')
            ->getBody()
            ->write(
             json_encode(
                 $um->InsertOrUpdate(
-                    $req->getParsedBody(), $idt->idInsertado
+                    $datosU, $idT
                 )
             )
         );
