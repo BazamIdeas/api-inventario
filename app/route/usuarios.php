@@ -48,7 +48,7 @@ $app->group('/usuario/', function () {
         );
     });
 
-    $this->get('lista', function ($req, $res, $args) {
+    $this->post('lista', function ($req, $res, $args) {
         $um = new UsuarioModel();
         
         return $res

@@ -8,7 +8,7 @@ $app->group('/proveedor/', function () {
                    ->write('SI FUNCIONA XXX');
     });
     
-    $this->get('lista', function ($req, $res, $args) {
+    $this->post('lista', function ($req, $res, $args) {
         $um = new ProveedorModel();
         
         return $res

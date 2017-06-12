@@ -9,7 +9,7 @@ $app->group('/bodega/', function () {
                    ->write('SI FUNCIONA XXX');
     });
     
-    $this->get('lista', function ($req, $res, $args) {
+    $this->post('lista', function ($req, $res, $args) {
         $um = new BodegaModel();
         
         return $res
